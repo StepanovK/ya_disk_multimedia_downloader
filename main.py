@@ -14,7 +14,6 @@ def main():
         logger.error('Токен отклонён')
         raise 'check token!'
 
-    # camera_files = list(yd.listdir(path=CAMERA_FOLDER))
     catalog = get_catalog()
     file_list = read_downloaded_file_list()
     date_for_deletion = datetime.date.today() - datetime.timedelta(days=DAYS_BEFORE_CLEANING)
