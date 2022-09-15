@@ -10,6 +10,6 @@ TOKEN = env.str('TOKEN_YD')
 PATH = env.str('PATH_YD')
 DAYS_BEFORE_CLEANING = env.int('DAYS_BEFORE_CLEANING')
 
-debug = True
+debug = False
 
 CAMERA_FOLDER = 'disk:/Фотокамера'
