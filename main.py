@@ -22,7 +22,9 @@ def main():
         media_type = mediafile.FIELDS.get('media_type', '')
         if media_type not in ('image', 'video'):
             continue
+
         file_name = mediafile.FIELDS.get('name', '')
+
         is_downloaded = file_name in file_list
         if not is_downloaded:
             try:
@@ -32,6 +34,7 @@ def main():
                 logger.info(f'Загружен файл {file_name}')
             except Exception as ex:
                 logger.error(f'Ошибка загрузки файла {file_name} по причине: {ex}')
+
         modified = mediafile.FIELDS.get('modified')
         if is_downloaded and isinstance(modified, datetime.datetime) and modified.date() < date_for_deletion:
             yd.remove(path=mediafile.FIELDS.get('path'), permanently=True)
