@@ -1,3 +1,5 @@
 /venv
+/Logs
+/.idea
 downloaded_files.json
 .env
