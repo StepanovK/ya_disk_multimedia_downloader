@@ -24,8 +24,8 @@ def main():
         if media_type not in ('image', 'video'):
             continue
         file_name = mediafile.FIELDS.get('name', '')
-        is_downloaded = False
-        if file_name not in file_list:
+        is_downloaded = file_name in file_list
+        if not is_downloaded:
             try:
                 yd.download(mediafile.FIELDS.get('path', ''), catalog + file_name)
                 file_list.append(file_name)
@@ -35,6 +35,7 @@ def main():
                 logger.error(f'Ошибка загрузки файла {file_name} по причине: {ex}')
         modified = mediafile.FIELDS.get('modified')
         if is_downloaded and isinstance(modified, datetime.datetime) and modified.date() < date_for_deletion:
+            yd.remove(path=mediafile.FIELDS.get('path'), permanently=True)
             logger.info(f'Файл {file_name} удалён с диска')
 
     write_downloaded_file_list(file_list)
@@ -77,4 +78,3 @@ if __name__ == '__main__':
             except Exception as ex:
                 logger.error(f'При загрузке файлов возникла ошибка: {ex}')
         sleep(1)
-
