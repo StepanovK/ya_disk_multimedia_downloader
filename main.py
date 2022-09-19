@@ -1,4 +1,4 @@
-from config import debug, logger, TOKEN, CAMERA_FOLDER, PATH, DAYS_BEFORE_CLEANING
+from config import debug, logger, TOKEN, CAMERA_FOLDER, PATH, DAYS_BEFORE_CLEANING, RUN_IN_LOOP
 import datetime
 from time import sleep
 import yadisk
@@ -7,7 +7,19 @@ import json
 DOWNLOADED_FILES_LIST_FILE_NAME = 'downloaded_files.json'
 
 
-def main():
+def start_downloading_in_loop():
+    while True:
+        if debug:
+            start_downloading()
+        else:
+            try:
+                start_downloading()
+            except Exception as ex:
+                logger.error(f'При загрузке файлов возникла ошибка: {ex}')
+        sleep(10)
+
+
+def start_downloading():
     yd = yadisk.YaDisk(token=TOKEN)
 
     if not yd.check_token():
@@ -71,12 +83,10 @@ def write_downloaded_file_list(file_list: list):
 
 
 if __name__ == '__main__':
-    while True:
-        if debug:
-            main()
-        else:
-            try:
-                main()
-            except Exception as ex:
-                logger.error(f'При загрузке файлов возникла ошибка: {ex}')
-        sleep(1)
+    if RUN_IN_LOOP:
+        logger.info('Начата загрузка файлов в цикле...')
+        start_downloading_in_loop()
+    else:
+        logger.info('Загрузка файлов начата...')
+        start_downloading()
+        logger.info('Загрузка файлов завершена!')
