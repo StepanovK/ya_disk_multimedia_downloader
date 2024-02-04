@@ -1,4 +1,5 @@
-from config import debug, logger, TOKEN, CAMERA_FOLDER, PATH, DAYS_BEFORE_CLEANING, RUN_IN_LOOP
+from pathlib import Path
+from config import debug, logger, TOKEN, CAMERA_FOLDER, PATH, DAYS_BEFORE_CLEANING, RUN_IN_LOOP, DATE_FROM
 import datetime
 from time import sleep
 import yadisk
@@ -26,12 +27,17 @@ def start_downloading():
         logger.error('Токен отклонён')
         raise 'check token!'
 
-    catalog = get_catalog()
+    catalog = photo_catalog()
     file_list = read_downloaded_file_list()
     date_for_deletion = datetime.date.today() - datetime.timedelta(days=DAYS_BEFORE_CLEANING)
 
     for mediafile in yd.listdir(path=CAMERA_FOLDER):
         media_type = mediafile.FIELDS.get('media_type', '')
+        mediafile_time = mediafile.FIELDS.get('photoslice_time')
+        if not mediafile_time:
+            mediafile_time = mediafile.FIELDS.get('created')
+        if mediafile_time and mediafile_time.date() < DATE_FROM:
+            continue
         if media_type not in ('image', 'video'):
             continue
 
@@ -55,13 +61,14 @@ def start_downloading():
     write_downloaded_file_list(file_list)
 
 
-def get_catalog() -> str:
+def photo_catalog() -> str:
     catalog = PATH
     if not isinstance(catalog, str):
         catalog = ''
     catalog = catalog.replace('\\', '/')
     if catalog[-1] != '/':
         catalog += '/'
+    Path(catalog).mkdir(parents=True, exist_ok=True)
     return catalog
 
 
