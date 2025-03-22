@@ -31,7 +31,7 @@ def start_downloading():
     file_list = read_downloaded_file_list()
     date_for_deletion = datetime.date.today() - datetime.timedelta(days=DAYS_BEFORE_CLEANING)
 
-    for mediafile in yd.listdir(path=CAMERA_FOLDER):
+    for mediafile in yd.listdir(CAMERA_FOLDER):
         media_type = mediafile.FIELDS.get('media_type', '')
         mediafile_time = mediafile.FIELDS.get('photoslice_time')
         if not mediafile_time:
